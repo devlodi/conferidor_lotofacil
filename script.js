@@ -3,24 +3,47 @@ document.addEventListener("DOMContentLoaded", function() {
     var jogosTextarea = document.getElementById('jogos-textarea');
     var resultadoInput = document.getElementById('resultado');
     var resultadoContainer = document.getElementById('resultado-conferencia');
+    var togglePremiacaoBtn = document.getElementById('togglePremiacao'); // Botão de alternância
+    var exibirTodosAcertos = false; // Estado inicial, exibe somente de 11 a 15
 
- fileInput.addEventListener('change', function() {
-    var file = fileInput.files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            jogosTextarea.value = e.target.result;
+    fileInput.addEventListener('change', function() {
+        var file = fileInput.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                jogosTextarea.value = e.target.result;
+                conferirJogos();
+            };
+            reader.readAsText(file);
+            fileInput.value = ''; // Limpa o valor do input após a leitura
+        }
+    });
+
+    togglePremiacaoBtn.addEventListener('click', function() {
+        exibirTodosAcertos = !exibirTodosAcertos; // Inverte o estado de exibição
+        conferirJogos(); // Atualiza a exibição da tabela
+    });
+
+    resultadoInput.addEventListener('input', conferirJogos);
+    jogosTextarea.addEventListener('input', conferirJogos);
+
+
+
+    // Insere o botão acima da tabela de acertos
+    function inserirBotaoVisualizacao() {
+        var botaoVisualizacao = document.createElement('button');
+        botaoVisualizacao.id = 'togglePremiacao';
+        botaoVisualizacao.className = 'toggle-premiacao';
+        botaoVisualizacao.textContent = '👁 0 a 15';
+        botaoVisualizacao.onclick = function() {
+            exibirTodosAcertos = !exibirTodosAcertos;
             conferirJogos();
         };
-        reader.readAsText(file);
-        // Limpa o valor do input após a leitura para garantir que o evento 'change' seja disparado novamente
-        fileInput.value = '';
+        
+        // Insere o botão no container, antes da tabela de premiação
+        resultadoContainer.insertBefore(botaoVisualizacao, resultadoContainer.firstChild);
     }
-});
 
-
-    resultadoInput.addEventListener('input', conferirJogos); // Conferir jogos quando o resultado muda
-    jogosTextarea.addEventListener('input', conferirJogos); // Conferir jogos quando o texto dos jogos muda
 
     function conferirJogos() {
         // Primeiro limpa o conteúdo anterior
@@ -32,8 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var resultado = resultadoInput.value.trim().split(/\s+/).map(Number);
 
         // Inicializa a contagem de premiação
-        var premiacao = {
-            11: 0, 12: 0, 13: 0, 14: 0, 15: 0
+       var premiacao = {
+             0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0,
+             11: 0, 12: 0, 13: 0, 14: 0, 15: 0
         };
 
         // Cria a tabela de resultados dos jogos
@@ -62,11 +86,17 @@ document.addEventListener("DOMContentLoaded", function() {
         // Adiciona a tabela de jogos atualizada ao container
         resultadoContainer.appendChild(tabelaJogos);
 
+            resultadoContainer.appendChild(togglePremiacaoBtn);
+
+
         // Cria e adiciona a tabela de premiação atualizada
         var tabelaPremiacao = document.createElement('table');
         tabelaPremiacao.innerHTML = '<tr><th>Acertos</th><th>Quantidade de Prêmios</th></tr>';
 
         Object.keys(premiacao).sort((a, b) => a - b).forEach(function(acertos) {
+            if (!exibirTodosAcertos && acertos < 11) {
+                return; // Não exibe acertos de 0 a 10 se exibirTodosAcertos for falso
+            }
             var tr = tabelaPremiacao.insertRow();
             tr.insertCell().textContent = acertos + ' acerto(s)';
             tr.insertCell().textContent = premiacao[acertos] + ' prêmio(s)';
@@ -118,16 +148,19 @@ function calcularPremiacaoEspecifica(dezenas, acertos, premiacao) {
         
     };
 
-    if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
-        const premios = regrasDePremiacao[dezenas.toString()];
-        if (premios.hasOwnProperty(acertos.toString())) {
-            premios[acertos.toString()].forEach((valor, index) => {
-                premiacao[acertos - index] += valor;
-            });
+    // Adiciona uma verificação para garantir que só modifique a premiação se os acertos estiverem entre 11 e 15
+    
+        if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
+            const premios = regrasDePremiacao[dezenas.toString()];
+            if (premios.hasOwnProperty(acertos.toString())) {
+                premios[acertos.toString()].forEach((valor, index) => {
+                    premiacao[acertos - index] += valor;
+                });
+            }
+        } else {
+            // Se não existem regras específicas para essa quantidade de dezenas
+            premiacao[acertos]++;
         }
-    } else {
-        // Se não existem regras específicas para essa quantidade de dezenas
-        premiacao[acertos]++;
     }
-}
+
 
