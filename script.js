@@ -61,25 +61,27 @@ document.addEventListener("DOMContentLoaded", function() {
         // Cria a tabela de resultados dos jogos
         var tabelaJogos = document.createElement('table');
         tabelaJogos.innerHTML = '<tr><th>Jogo</th><th>pontos</th><th>DZ/Por jogos</th><th>Números Acertados</th></tr>';
-
-        jogos.forEach(function(numerosDoJogo, indice) {
+jogos.forEach(function(numerosDoJogo, indice) {
     var numerosAcertados = numerosDoJogo.filter(numero => resultado.includes(numero));
     var pontos = numerosAcertados.length;
     var dezenas = numerosDoJogo.length;
     var tr = tabelaJogos.insertRow();
+
     tr.insertCell().textContent = 'Jogo ' + (indice + 1);
-    tr.insertCell().textContent = pontos + ' Pontos';
+    var celulaPontos = tr.insertCell(); // Cria a célula para os 'pontos'
+
+    // Aqui você verifica se a contagem de pontos está entre 11 e 15
+    if (pontos >= 11 && pontos <= 15) {
+        // Chama a função calcularPremiacaoEspecifica e passa o objeto premiacao
+        celulaPontos.textContent = calcularPremiacaoEspecifica(dezenas, pontos, premiacao);
+    } else {
+        // Se a contagem de pontos não está entre 11 e 15, apenas mostra os pontos
+        celulaPontos.textContent = pontos + ' Pontos';
+    }
+
     tr.insertCell().textContent = dezenas + ' dezenas';
-    tr.insertCell().textContent = numerosAcertados.join(', '); // Use a variável correta aqui
-
-            // Incrementa a contagem de premiação com base no número de pontos
-            if (pontos.length >= 11 && pontos.length <= 15) {
-                premiacao[pontos.length]++;
-            }
-
-         calcularPremiacaoEspecifica(dezenas, pontos, premiacao);
-
-        });
+    tr.insertCell().textContent = numerosAcertados.join(', ');
+});
 
         // Adiciona a tabela de jogos atualizada ao container
         resultadoContainer.appendChild(tabelaJogos);
@@ -147,19 +149,23 @@ function calcularPremiacaoEspecifica(dezenas, pontos, premiacao) {
         
     };
 
-    // Adiciona uma verificação para garantir que só modifique a premiação se os pontos estiverem entre 11 e 15
-    
-        if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
-            const premios = regrasDePremiacao[dezenas.toString()];
-            if (premios.hasOwnProperty(pontos.toString())) {
-                premios[pontos.toString()].forEach((valor, index) => {
-                    premiacao[pontos - index] += valor;
-                });
-            }
-        } else {
-            // Se não existem regras específicas para essa quantidade de dezenas
-            premiacao[pontos]++;
+     let textoPontos = pontos + ' Pontos';
+
+    if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
+        if (regrasDePremiacao[dezenas.toString()].hasOwnProperty(pontos.toString())) {
+            const premios = regrasDePremiacao[dezenas.toString()][pontos.toString()];
+            const detalhesPremios = premios.map((valor, index) => {
+                // Atualiza o objeto premiação
+                premiacao[pontos - index] = (premiacao[pontos - index] || 0) + valor;
+                return valor + 'x' + (pontos - index);
+            }).join(' + ');
+
+            textoPontos += ': (' + detalhesPremios + ')';
         }
+    } else {
+        // Se não houver regras específicas, apenas incrementa o valor de premiação
+        premiacao[pontos] = (premiacao[pontos] || 0) + 1;
     }
 
-
+    return textoPontos; // Retorna a string formatada para os pontos
+}
