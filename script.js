@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var resultadoInput = document.getElementById('resultado');
     var resultadoContainer = document.getElementById('resultado-conferencia');
     var togglePremiacaoBtn = document.getElementById('togglePremiacao'); // Botão de alternância
-    var exibirTodosAcertos = false; // Estado inicial, exibe somente de 11 a 15
+    var exibirTodospontos = false; // Estado inicial, exibe somente de 11 a 15
 
     fileInput.addEventListener('change', function() {
         var file = fileInput.files[0];
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     togglePremiacaoBtn.addEventListener('click', function() {
-        exibirTodosAcertos = !exibirTodosAcertos; // Inverte o estado de exibição
+        exibirTodospontos = !exibirTodospontos; // Inverte o estado de exibição
         conferirJogos(); // Atualiza a exibição da tabela
     });
 
@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-    // Insere o botão acima da tabela de acertos
+    // Insere o botão acima da tabela de pontos
     function inserirBotaoVisualizacao() {
         var botaoVisualizacao = document.createElement('button');
         botaoVisualizacao.id = 'togglePremiacao';
         botaoVisualizacao.className = 'toggle-premiacao';
         botaoVisualizacao.textContent = '👁 0 a 15';
         botaoVisualizacao.onclick = function() {
-            exibirTodosAcertos = !exibirTodosAcertos;
+            exibirTodospontos = !exibirTodospontos;
             conferirJogos();
         };
         
@@ -62,24 +62,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Cria a tabela de resultados dos jogos
         var tabelaJogos = document.createElement('table');
-        tabelaJogos.innerHTML = '<tr><th>Jogo</th><th>Acertos</th><th>DZ/Por jogos</th><th>Números Acertados</th></tr>';
+        tabelaJogos.innerHTML = '<tr><th>Jogo</th><th>pontos</th><th>DZ/Por jogos</th><th>Números Acertados</th></tr>';
 
         jogos.forEach(function(numerosDoJogo, indice) {
     var numerosAcertados = numerosDoJogo.filter(numero => resultado.includes(numero));
-    var acertos = numerosAcertados.length;
+    var pontos = numerosAcertados.length;
     var dezenas = numerosDoJogo.length;
     var tr = tabelaJogos.insertRow();
     tr.insertCell().textContent = 'Jogo ' + (indice + 1);
-    tr.insertCell().textContent = acertos + ' acertos';
+    tr.insertCell().textContent = pontos + ' pontos';
     tr.insertCell().textContent = dezenas + ' dezenas';
     tr.insertCell().textContent = numerosAcertados.join(', '); // Use a variável correta aqui
 
-            // Incrementa a contagem de premiação com base no número de acertos
-            if (acertos.length >= 11 && acertos.length <= 15) {
-                premiacao[acertos.length]++;
+            // Incrementa a contagem de premiação com base no número de pontos
+            if (pontos.length >= 11 && pontos.length <= 15) {
+                premiacao[pontos.length]++;
             }
 
-         calcularPremiacaoEspecifica(dezenas, acertos, premiacao);
+         calcularPremiacaoEspecifica(dezenas, pontos, premiacao);
 
         });
 
@@ -91,15 +91,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Cria e adiciona a tabela de premiação atualizada
         var tabelaPremiacao = document.createElement('table');
-        tabelaPremiacao.innerHTML = '<tr><th>Acertos</th><th>Quantidade de Prêmios</th></tr>';
+        tabelaPremiacao.innerHTML = '<tr><th>pontos</th><th>Quantidade de Prêmios</th></tr>';
 
-        Object.keys(premiacao).sort((a, b) => a - b).forEach(function(acertos) {
-            if (!exibirTodosAcertos && acertos < 11) {
-                return; // Não exibe acertos de 0 a 10 se exibirTodosAcertos for falso
+        Object.keys(premiacao).sort((a, b) => a - b).forEach(function(pontos) {
+            if (!exibirTodospontos && pontos < 11) {
+                return; // Não exibe pontos de 0 a 10 se exibirTodospontos for falso
             }
             var tr = tabelaPremiacao.insertRow();
-            tr.insertCell().textContent = acertos + ' acerto(s)';
-            tr.insertCell().textContent = premiacao[acertos] + ' prêmio(s)';
+            tr.insertCell().textContent = pontos + ' acerto(s)';
+            tr.insertCell().textContent = premiacao[pontos] + ' prêmio(s)';
         });
 
         resultadoContainer.appendChild(tabelaPremiacao);
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-function calcularPremiacaoEspecifica(dezenas, acertos, premiacao) {
+function calcularPremiacaoEspecifica(dezenas, pontos, premiacao) {
     const regrasDePremiacao = {
         '16': {
             '15': [1, 15],
@@ -148,18 +148,18 @@ function calcularPremiacaoEspecifica(dezenas, acertos, premiacao) {
         
     };
 
-    // Adiciona uma verificação para garantir que só modifique a premiação se os acertos estiverem entre 11 e 15
+    // Adiciona uma verificação para garantir que só modifique a premiação se os pontos estiverem entre 11 e 15
     
         if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
             const premios = regrasDePremiacao[dezenas.toString()];
-            if (premios.hasOwnProperty(acertos.toString())) {
-                premios[acertos.toString()].forEach((valor, index) => {
-                    premiacao[acertos - index] += valor;
+            if (premios.hasOwnProperty(pontos.toString())) {
+                premios[pontos.toString()].forEach((valor, index) => {
+                    premiacao[pontos - index] += valor;
                 });
             }
         } else {
             // Se não existem regras específicas para essa quantidade de dezenas
-            premiacao[acertos]++;
+            premiacao[pontos]++;
         }
     }
 
