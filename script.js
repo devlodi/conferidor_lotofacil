@@ -3,8 +3,19 @@ document.addEventListener("DOMContentLoaded", function() {
     var jogosTextarea = document.getElementById('jogos-textarea');
     var resultadoInput = document.getElementById('resultado');
     var resultadoContainer = document.getElementById('resultado-conferencia');
-    var togglePremiacaoBtn = document.getElementById('togglePremiacao'); // Botão de alternância
+        var togglePremiacaoBtn = document.getElementById('togglePremiacao'); // Botão de alternância
     var exibirTodospontos = false; // Estado inicial, exibe somente de 11 a 15
+
+    togglePremiacaoBtn.addEventListener('click', function() {
+        exibirTodospontos = !exibirTodospontos; // Inverte o estado de exibição
+        // Altera o texto do botão com base no estado de exibição
+        if (exibirTodospontos) {
+            togglePremiacaoBtn.textContent = '👁️Ver de 11 a 15';
+        } else {
+            togglePremiacaoBtn.textContent = '👁️Ver de 0 a 15';
+        }
+        conferirJogos(); // Atualiza a exibição da tabela
+    });
 
     fileInput.addEventListener('change', function() {
         var file = fileInput.files[0];
@@ -19,30 +30,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    togglePremiacaoBtn.addEventListener('click', function() {
-        exibirTodospontos = !exibirTodospontos; // Inverte o estado de exibição
-        conferirJogos(); // Atualiza a exibição da tabela
-    });
+  
+
+
 
     resultadoInput.addEventListener('input', conferirJogos);
     jogosTextarea.addEventListener('input', conferirJogos);
 
 
 
-    // Insere o botão acima da tabela de pontos
-    function inserirBotaoVisualizacao() {
-        var botaoVisualizacao = document.createElement('button');
-        botaoVisualizacao.id = 'togglePremiacao';
-        botaoVisualizacao.className = 'toggle-premiacao';
-        botaoVisualizacao.textContent = '👁 0 a 15';
-        botaoVisualizacao.onclick = function() {
-            exibirTodospontos = !exibirTodospontos;
-            conferirJogos();
-        };
-        
-        // Insere o botão no container, antes da tabela de premiação
-        resultadoContainer.insertBefore(botaoVisualizacao, resultadoContainer.firstChild);
-    }
+ 
+
 
 
     function conferirJogos() {
@@ -70,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var dezenas = numerosDoJogo.length;
     var tr = tabelaJogos.insertRow();
     tr.insertCell().textContent = 'Jogo ' + (indice + 1);
-    tr.insertCell().textContent = pontos + ' pontos';
+    tr.insertCell().textContent = pontos + ' Pontos';
     tr.insertCell().textContent = dezenas + ' dezenas';
     tr.insertCell().textContent = numerosAcertados.join(', '); // Use a variável correta aqui
 
@@ -91,14 +89,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Cria e adiciona a tabela de premiação atualizada
         var tabelaPremiacao = document.createElement('table');
-        tabelaPremiacao.innerHTML = '<tr><th>pontos</th><th>Quantidade de Prêmios</th></tr>';
+        tabelaPremiacao.innerHTML = '<tr><th>Pontos (já multiplicados caso jodos de mais dezenas)</th><th>Quantidade de Prêmios</th></tr>';
 
         Object.keys(premiacao).sort((a, b) => a - b).forEach(function(pontos) {
+            // Correção: remova o .length de pontos
             if (!exibirTodospontos && pontos < 11) {
                 return; // Não exibe pontos de 0 a 10 se exibirTodospontos for falso
             }
             var tr = tabelaPremiacao.insertRow();
-            tr.insertCell().textContent = pontos + ' pontos(s)';
+            tr.insertCell().textContent = pontos + ' Pontos(s)';
             tr.insertCell().textContent = premiacao[pontos] + ' prêmio(s)';
         });
 
