@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return; // Não exibe pontos de 0 a 10 se exibirTodospontos for falso
             }
             var tr = tabelaPremiacao.insertRow();
-            tr.insertCell().textContent = pontos + ' acerto(s)';
+            tr.insertCell().textContent = pontos + ' pontos(s)';
             tr.insertCell().textContent = premiacao[pontos] + ' prêmio(s)';
         });
 
