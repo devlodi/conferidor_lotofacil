@@ -9,17 +9,21 @@
 <body>
     <div class="container">
         <div class="input-group">
-            <input type="text" id="resultado" placeholder="ESCOLHA AQUI O RESULTADO">
+            <input type="text" id="resultado" placeholder="ESCREVA AQUI O RESULTADO">
         </div>
         <div class="input-group">
+            <p>Insira abaixo seus jogos separando as dezenas por espaço ou carregue um arquivo que siga este padrão</p>
             <textarea id="jogos-textarea" placeholder="DIGITE OU CARREGUE SEUS JOGOS ABAIXO"></textarea>
             <input type="file" id="file-input" accept=".txt" hidden autocomplete="off">
-
             <label for="file-input" class="file-label">CARREGAR JOGOS</label>
         </div>
-        <div class="output-group">
-    <div id="resultado-conferencia" placeholder="RESULTADO DAS CONFERÊNCIAS ABAIXO"></div>
+
+      <div class="output-group">
+    <div id="resultado-conferencia"></div>
+    <button id="togglePremiacao" class="toggle-premiacao">👁 0 a 15</button>
 </div>
+
+
 
     </div>
     <script src="script.js"></script>
