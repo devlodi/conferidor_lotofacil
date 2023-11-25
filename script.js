@@ -41,17 +41,22 @@ document.addEventListener("DOMContentLoaded", function() {
         tabelaJogos.innerHTML = '<tr><th>Jogo</th><th>Acertos</th><th>DZ/Por jogos</th><th>Números Acertados</th></tr>';
 
         jogos.forEach(function(numerosDoJogo, indice) {
-            var acertos = numerosDoJogo.filter(numero => resultado.includes(numero));
-            var tr = tabelaJogos.insertRow();
-            tr.insertCell().textContent = 'Jogo ' + (indice + 1);
-            tr.insertCell().textContent = acertos.length + ' acertos';
-            tr.insertCell().textContent = numerosDoJogo.length + ' dezenas';
-            tr.insertCell().textContent = acertos.join(', ');
+    var numerosAcertados = numerosDoJogo.filter(numero => resultado.includes(numero));
+    var acertos = numerosAcertados.length;
+    var dezenas = numerosDoJogo.length;
+    var tr = tabelaJogos.insertRow();
+    tr.insertCell().textContent = 'Jogo ' + (indice + 1);
+    tr.insertCell().textContent = acertos + ' acertos';
+    tr.insertCell().textContent = dezenas + ' dezenas';
+    tr.insertCell().textContent = numerosAcertados.join(', '); // Use a variável correta aqui
 
             // Incrementa a contagem de premiação com base no número de acertos
             if (acertos.length >= 11 && acertos.length <= 15) {
                 premiacao[acertos.length]++;
             }
+
+         calcularPremiacaoEspecifica(dezenas, acertos, premiacao);
+
         });
 
         // Adiciona a tabela de jogos atualizada ao container
@@ -70,3 +75,44 @@ document.addEventListener("DOMContentLoaded", function() {
         resultadoContainer.appendChild(tabelaPremiacao);
     }
 });
+
+
+function calcularPremiacaoEspecifica(dezenas, acertos, premiacao) {
+    const regrasDePremiacao = {
+        '16': {
+            '15': [1, 15],
+            '14': [2, 14],
+            '13': [3, 13],
+            '12': [4, 12],
+            '11': [5]
+        },
+        '17': {
+            '15': [1, 30, 105],
+            '14': [3, 42, 91],
+            '13': [6, 52, 78],
+            '12': [10, 60],
+            '11': [15]
+        },
+         '18': {
+            '15': [1, 45, 315, 455],
+            '14': [4, 84, 364, 364],
+            '13': [10, 130, 390],
+            '12': [20, 180],
+            '11': [35]
+        }
+        
+    };
+
+    if (regrasDePremiacao.hasOwnProperty(dezenas.toString())) {
+        const premios = regrasDePremiacao[dezenas.toString()];
+        if (premios.hasOwnProperty(acertos.toString())) {
+            premios[acertos.toString()].forEach((valor, index) => {
+                premiacao[acertos - index] += valor;
+            });
+        }
+    } else {
+        // Se não existem regras específicas para essa quantidade de dezenas
+        premiacao[acertos]++;
+    }
+}
+
