@@ -10,9 +10,28 @@ body, html {
 }
 
 .toggle-premiacao {
+    padding: 10px 5px;
     margin-top: 15px;
-    
+    background-color: #9b5fb6; /* Cor de fundo roxo */
+    color: white; /* Cor do texto */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Bordas levemente arredondadas */
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s; /* Transição suave para hover e active states */
+    outline: none; /* Remove o contorno quando focado (clicado) */
 }
+
+.toggle-premiacao:hover {
+    background-color: #a66bbe; /* Cor de fundo mais clara quando o mouse passa por cima */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombreamento para efeito de elevação */
+}
+
+.toggle-premiacao:active {
+    background-color: #80598b; /* Cor de fundo mais escura quando o botão é pressionado */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombreamento mais próximo para efeito de pressionamento */
+    transform: translateY(1px); /* Desloca o botão ligeiramente para baixo quando pressionado */
+}
+
 
 
 .container {
@@ -52,23 +71,46 @@ input[type="text"], textarea {
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 20px;
-}
-
-table, th, td {
-    border: 1px solid #ccc;
+    border: 1px solid #6a397b;
+    border-radius: 10px; /* Arredondando as bordas da tabela */
+    overflow: hidden; /* Isso garante que o conteúdo interno não ultrapasse o border-radius */
 }
 
 th, td {
     padding: 10px;
     text-align: left;
-    word-break: break-word; /* Permite a quebra de texto dentro da célula */
+    word-break: break-word;
+    border-bottom: 1px solid #6a397b; /* Linhas horizontais */
+    border-right: 1px solid #6a397b; /* Linhas verticais */
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #9b5fb6;
+    color: white;
 }
+
+/* Estilos para as linhas ímpares e pares da tabela */
+tr:nth-child(odd) td {
+    background-color: #f3e5f5;
+}
+
+tr:nth-child(even) td {
+    background-color: #e1bee7;
+}
+
+/* Remove a borda direita do último td de cada linha para evitar duplicação da borda */
+td:last-child {
+    border-right: none;
+}
+
+/* Remove a borda inferior do último td de cada coluna para evitar duplicação da borda */
+tr:last-child td {
+    border-bottom: none;
+}
+
 
 /* Adicione estilos específicos para as colunas se necessário */
 th:nth-child(1), td:nth-child(1) { width: 10%; } /* Coluna Jogo */
