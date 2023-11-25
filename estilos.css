@@ -114,7 +114,7 @@ tr:last-child td {
 
 /* Adicione estilos específicos para as colunas se necessário */
 th:nth-child(1), td:nth-child(1) { width: 10%; } /* Coluna Jogo */
-th:nth-child(2), td:nth-child(2) { width: 10%; } /* Coluna Acertos */
+th:nth-child(2), td:nth-child(2) { width: 30%; } /* Coluna Acertos */
 th:nth-child(3), td:nth-child(3) { width: 20%; } /* Coluna DZ/Por jogos */
 th:nth-child(4), td:nth-child(4) { width: 60%; } /* Coluna Números Acertados */
 
